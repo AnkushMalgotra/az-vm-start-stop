@@ -1,0 +1,27 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-20.04'
+
+schedules:
+- cron: '0 21 * * *'
+  displayName: 'Run pipeline at 9 pm'
+  always: true
+  branches:
+    include:
+    - main
+
+stages:
+- stage: StopVm
+  displayName: 'Stop VM at 9 pm'
+  jobs:
+  - job: StopVmJob
+    displayName: 'Stop VM Job'
+    steps:
+    - task: AzureCLI@2
+      inputs:
+        azureSubscription: 'Connecting-cicd-pipe'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: 'az vm deallocate -g inrg1 -n todobackendsh'
